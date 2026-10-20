@@ -1,5 +1,7 @@
+import { destructiveAlerts } from './destructive-alerts';
 export const Alert = {
   alert(title, message = '', buttons, options) {
+    if (buttons?.some(button => button.style === 'destructive')) { destructiveAlerts.show(title, message, buttons, options); return; }
     if (typeof window === 'undefined') return;
     const text = [title, message].filter(Boolean).join('\n\n');
     if (!buttons?.length) { window.alert(text); return; }
