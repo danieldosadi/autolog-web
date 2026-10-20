@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {  } from 'react-native';
+import { AppState, Platform } from 'react-native';
+import { supabase } from './supabase';
+import { createVehicleSync } from './vehicle-sync';
 import { Alert } from './alert';
 import { KEY, readBackup } from './model';
 import { VEHICLES_KEY, readVehicles } from './vehicles';
@@ -13,6 +15,18 @@ export function StoreProvider({ children, userId }) {
   const [stations, setStations] = useState([]);
   const writingStations = useRef(false);
   const recordsKey = `${KEY}.${userId}`, vehiclesKey = `${VEHICLES_KEY}.${userId}`, stationsKey = `${STATIONS_KEY}.${userId}`;
+  const [vehicleSyncStatus, setVehicleSyncStatus] = useState('pending');
+  const vehicleCloud = useMemo(() => createVehicleSync({ storage: AsyncStorage, client: supabase, userId, cacheKey: vehiclesKey, onChange: setVehicles, onStatus: setVehicleSyncStatus }), [userId, vehiclesKey]);
+  useEffect(() => { vehicleCloud.setActive(true); return () => { vehicleCloud.setActive(false); }; }, [vehicleCloud]);
+  useEffect(() => {
+    if (!ready) return;
+    const refresh = () => { if (AppState.currentState === 'active' || Platform.OS === 'web') vehicleCloud.sync(); };
+    refresh();
+    const timer = setInterval(refresh, 30000);
+    const appState = AppState.addEventListener('change', state => { if (state === 'active') refresh(); });
+    if (Platform.OS === 'web') { window.addEventListener('focus', refresh); window.addEventListener('online', refresh); }
+    return () => { clearInterval(timer); appState.remove(); if (Platform.OS === 'web') { window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); } };
+  }, [ready, vehicleCloud]);
   useEffect(() => {
     let alive = true;
     async function load() {
@@ -47,7 +61,7 @@ export function StoreProvider({ children, userId }) {
   async function persistVehicles(next) {
     if (!ready || writingVehicles.current) return false;
     writingVehicles.current = true;
-    try { const checked = readVehicles(JSON.stringify(next)); await AsyncStorage.setItem(vehiclesKey, JSON.stringify(checked)); setVehicles(checked); return true; }
+    try { await vehicleCloud.save(next, vehicles); vehicleCloud.sync(); return true; }
     catch { Alert.alert('Não foi possível salvar o veículo', 'Verifique os dados e o espaço livre do dispositivo.'); return false; }
     finally { writingVehicles.current = false; }
   }
@@ -58,6 +72,6 @@ export function StoreProvider({ children, userId }) {
     catch { Alert.alert('Não foi possível salvar o posto', 'Verifique os dados e o espaço livre do dispositivo.'); return false; }
     finally { writingStations.current = false; }
   }
-  return <Store.Provider value={{ entries, ready, loadError, persist, vehicles, persistVehicles, stations, persistStations }}>{children}</Store.Provider>;
+  return <Store.Provider value={{ entries, ready, loadError, persist, vehicles, persistVehicles, vehicleSyncStatus, syncVehicles: vehicleCloud.sync, stations, persistStations }}>{children}</Store.Provider>;
 }
 export const useStore = () => useContext(Store);

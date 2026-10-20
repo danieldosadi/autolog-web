@@ -30,7 +30,7 @@ export default function Account() {
     try {
       const { data, error } = await supabase.functions.invoke('delete-account', { body: {} });
       if (error || !data?.deleted) throw Error('delete_failed');
-      await AsyncStorage.multiRemove([KEY, VEHICLES_KEY, STATIONS_KEY].map(key => `${key}.${session.user.id}`));
+      await AsyncStorage.multiRemove([...([KEY, VEHICLES_KEY, STATIONS_KEY].map(key => `${key}.${session.user.id}`)), `${VEHICLES_KEY}.${session.user.id}.pending.v1`, `${VEHICLES_KEY}.${session.user.id}.cloud-migrated.v1`]);
       await signOut();
     } catch { setMessage('Não foi possível concluir o encerramento. Verifique a conexão e tente novamente.'); } finally { setBusy(false); }
   }
