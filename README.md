@@ -42,6 +42,6 @@ As funções `check-email` e `delete-account` ficam no Supabase, com a chave adm
 
 ## Dados
 
-Os veículos são sincronizados pelo Supabase entre Android e web, usando a mesma conta. Na primeira abertura da versão atualizada, os veículos locais são importados automaticamente sem substituir cadastros remotos já existentes. Alterações offline ficam numa fila local e são reenviadas ao reconectar. Exclusões usam marcadores para impedir que um dispositivo antigo restaure veículos removidos. Há atualização automática a cada 30 segundos, ao retornar à tela e pelo botão Sincronizar agora.
+Os veículos são sincronizados pelo Supabase entre Android e web, usando a mesma conta. Na primeira abertura da versão atualizada, os veículos locais são importados automaticamente sem substituir cadastros remotos já existentes. Alterações offline ficam numa fila local e são reenviadas ao reconectar. Exclusões usam marcadores para impedir que um dispositivo antigo restaure veículos removidos. Há atualização automática a cada 30 segundos, ao retornar à tela e após salvar alterações.
 
 Postos e abastecimentos continuam locais por conta. O encerramento exclui a conta, seus veículos remotos e os registros no navegador atual.
