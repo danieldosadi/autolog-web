@@ -1,0 +1,8 @@
+project_id = "autolog"
+
+# A consulta ocorre antes do login; o RPC interno é exclusivo do service_role.
+[functions.check-email]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = false

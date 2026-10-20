@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "AutoLog-Expo",
-    "slug": "AutoLog-Expo",
+    "name": "AutoLog",
+    "slug": "autolog",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true
     },
@@ -15,10 +15,25 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "br.com.autolog"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme": "autolog",
+    "plugins": [
+      "expo-router",
+      "expo-sharing",
+      "expo-web-browser",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a4f58466-17b1-4465-9645-9d3f7dd5e211"
+      }
+    },
+    "owner": "danieldosadi"
   }
 }
