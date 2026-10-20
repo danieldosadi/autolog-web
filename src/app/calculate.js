@@ -15,5 +15,5 @@ export default function Calculate() {
     ? intervals.reduce((sum, c) => sum + c.distance, 0) / intervals.reduce((sum, c) => sum + c.liters, 0)
     : null;
   if (!ready) return <SafeAreaView style={{ flex: 1, backgroundColor: '#111314', alignItems: 'center', justifyContent: 'center' }}>{loadError ? <Text style={{ color: '#ff8b8f' }}>Não foi possível carregar os dados. Reabra o app.</Text> : <ActivityIndicator color="#fa4145" />}</SafeAreaView>;
-  return <FuelCalculator key={initialVehicleId || 'manual'} average={average} initialVehicleId={initialVehicleId} />;
+  return <FuelCalculator average={average} initialVehicleId={initialVehicleId} />;
 }
